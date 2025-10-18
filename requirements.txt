@@ -1,18 +1,26 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 as base
-WORKDIR /app
-
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-COPY IcSimAccounting /src
-WORKDIR /src
-RUN ls
-RUN dotnet restore
-RUN dotnet build "IcSimAccounting.csproj" -c Debug -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "IcSimAccounting.csproj" -c Debug -o /app/publish /p:EnvironmentName=Development
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-EXPOSE 80
-ENTRYPOINT ["dotnet", "IcSimAccounting.dll"]
+blinker==1.9.0
+certifi==2025.10.5
+cffi==2.0.0
+charset-normalizer==3.4.4
+click==8.3.0
+colorama==0.4.6
+cryptography==46.0.3
+Flask==3.1.2
+flask-cors==6.0.1
+gunicorn==23.0.0
+idna==3.11
+itsdangerous==2.2.0
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+ndg-httpsclient==0.5.1
+packaging==25.0
+pusher==3.3.3
+pyasn1==0.6.1
+pycparser==2.23
+PyNaCl==1.6.0
+pyOpenSSL==25.3.0
+requests==2.32.5
+six==1.17.0
+typing_extensions==4.15.0
+urllib3==2.5.0
+Werkzeug==3.1.3
