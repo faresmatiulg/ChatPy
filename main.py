@@ -19,9 +19,9 @@ pusher_client = pusher.Pusher(
 # --- Configuración de la base de datos (AlwaysData) ---
 db_config = {
     'host': 'mysql-chatpy.alwaysdata.net',  # cambia por tu host exacto
-    'user': 'chat_user',                    # tu usuario MySQL
-    'password': 'TU_CONTRASEÑA',            # tu contraseña
-    'database': 'chatpy_db'                 # nombre de la BD
+    'user': 'flazaro',                    # tu usuario MySQL
+    'password': 'mathias-08',            # tu contraseña
+    'database': 'flazaro_chat_db'                 # nombre de la BD
 }
 
 def get_db_connection():
@@ -69,3 +69,4 @@ def get_messages():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
