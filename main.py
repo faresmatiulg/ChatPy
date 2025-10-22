@@ -16,12 +16,12 @@ pusher_client = pusher.Pusher(
     ssl=True
 )
 
-# --- Configuración de la base de datos (AlwaysData) ---
+# --- Configuración de base de datos (AlwaysData) ---
 db_config = {
-    'host': 'mysql-chatpy.alwaysdata.net',  # cambia por tu host exacto
-    'user': 'flazaro',                    # tu usuario MySQL
-    'password': 'mathias-08',            # tu contraseña
-    'database': 'flazaro_chat_db'                 # nombre de la BD
+    'host': 'mysql-chatpy.alwaysdata.net',   # cambia esto por tu host real
+    'user': 'flazaro',                     # tu usuario MySQL
+    'password': 'mathias-08',             # tu contraseña
+    'database': 'flazaro_chat_db'                  # tu base de datos
 }
 
 def get_db_connection():
@@ -48,25 +48,10 @@ def send_message():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-    # Enviar mensaje por Pusher
+    # Enviar evento por Pusher
     pusher_client.trigger('my-channel', 'my-event', {'message': message, 'senderId': sender_id})
 
     return jsonify({'status': 'success'})
 
-# --- Ruta para obtener mensajes anteriores ---
-@app.route('/get_messages', methods=['GET'])
-def get_messages():
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM messages ORDER BY timestamp ASC")
-        rows = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return jsonify(rows)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
 if __name__ == '__main__':
     app.run(debug=True)
-
