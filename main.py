@@ -16,7 +16,7 @@ pusher_client = pusher.Pusher(
 )
 
 db_config = {
-    'host': 'mysql-chatpy.alwaysdata.net',   
+    'host': 'mysql-flazaro.alwaysdata.net',   
     'user': 'flazaro',                     
     'password': 'mathias-08',             
     'database': 'flazaro_chat_db'                  
@@ -53,4 +53,5 @@ def send_message():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
