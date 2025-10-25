@@ -7,7 +7,6 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# --- Configuración de Pusher ---
 pusher_client = pusher.Pusher(
     app_id='2064483',
     key='ebff80d16de6cdb1443e',
@@ -16,18 +15,17 @@ pusher_client = pusher.Pusher(
     ssl=True
 )
 
-# --- Configuración de base de datos (AlwaysData) ---
 db_config = {
-    'host': 'mysql-chatpy.alwaysdata.net',   # cambia esto por tu host real
-    'user': 'flazaro',                     # tu usuario MySQL
-    'password': 'mathias-08',             # tu contraseña
-    'database': 'flazaro_chat_db'                  # tu base de datos
+    'host': 'mysql-chatpy.alwaysdata.net',   
+    'user': 'flazaro',                     
+    'password': 'mathias-08',             
+    'database': 'flazaro_chat_db'                  
 }
 
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 
-# --- Ruta para enviar mensaje ---
+
 @app.route('/send_message', methods=['POST'])
 def send_message():
     data = request.get_json()
@@ -55,3 +53,4 @@ def send_message():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
