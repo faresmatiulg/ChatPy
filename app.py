@@ -130,23 +130,31 @@ def get_or_create_user(username: str):
     username = (username or '').strip()
     if not username:
         return None
+        
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
-    role = 'admin' if username.lower() == 'admin' else 'user'
-    # upsert
+    
+    # Check if admin already exists
+    cursor.execute("SELECT id, username, role FROM usuarios WHERE role='admin'")
+    admin_exists = cursor.fetchone()
+    
+    # Set role: 'admin' only if username is 'admin' and no other admin exists
+    if username.lower() == 'admin' and not admin_exists:
+        role = 'admin'
+    else:
+        role = 'user'
+    
+    # Check if user exists
     cursor.execute("SELECT id, username, role FROM usuarios WHERE username=%s", (username,))
     row = cursor.fetchone()
+    
     if not row:
+        # Create new user
         cursor.execute("INSERT INTO usuarios (username, role) VALUES (%s, %s)", (username, role))
         connection.commit()
         user_id = cursor.lastrowid
         row = {'id': user_id, 'username': username, 'role': role}
-    else:
-        # elevar a admin si corresponde
-        if role == 'admin' and row.get('role') != 'admin':
-            cursor.execute("UPDATE usuarios SET role='admin' WHERE id=%s", (row['id'],))
-            connection.commit()
-            row['role'] = 'admin'
+    
     cursor.close()
     connection.close()
     return row
@@ -252,12 +260,18 @@ def create_dm():
 
 @app.route('/api/login', methods=['POST'])
 def api_login():
-    data = request.get_json() or {}
-    username = (data.get('username') or '').strip()
+    username = request.json.get('username', '').strip()
     if not username:
-        return jsonify({'error': 'username requerido'}), 400
+        return jsonify({'error': 'El nombre de usuario no puede estar vacío'}), 400
+    
+    # Auto-register the user if they don't exist
     user = get_or_create_user(username)
-    return jsonify({'user': user}), 200
+    if not user:
+        return jsonify({'error': 'Error al crear el usuario'}), 500
+        
+    # Set session
+    session['user'] = user
+    return jsonify(user), 200
 
 @app.route('/api/me', methods=['GET'])
 def api_me():
