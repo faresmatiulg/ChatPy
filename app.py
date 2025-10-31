@@ -112,13 +112,19 @@ def ensure_schema():
     cursor.close()
     connection.close()
 
-@app.before_first_request
+_schema_initialized = False
+
 def _initialize_schema():
-    try:
-        ensure_schema()
-    except Exception as e:
-        # Registrar error pero permitir que la app levante para facilitar troubleshooting
-        print(f"[WARN] Error inicializando esquema: {e}")
+    global _schema_initialized
+    if not _schema_initialized:
+        try:
+            ensure_schema()
+            _schema_initialized = True
+        except Exception as e:
+            print(f"[WARN] Error inicializando esquema: {e}")
+
+# Call _initialize_schema when the app starts
+_initialize_schema()
 
 def get_or_create_user(username: str):
     username = (username or '').strip()
