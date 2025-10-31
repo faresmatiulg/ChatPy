@@ -40,6 +40,7 @@ def get_db_connection():
         user=os.environ.get('DB_USER', '436286'),
         password=os.environ.get('DB_PASS', 'brayan933783039'),
         port=int(os.environ.get('DB_PORT', '3306')),
+        connection_timeout=10,
         charset='utf8mb4',
         collation='utf8mb4_unicode_ci'
     )
@@ -111,7 +112,13 @@ def ensure_schema():
     cursor.close()
     connection.close()
 
-ensure_schema()
+@app.before_first_request
+def _initialize_schema():
+    try:
+        ensure_schema()
+    except Exception as e:
+        # Registrar error pero permitir que la app levante para facilitar troubleshooting
+        print(f"[WARN] Error inicializando esquema: {e}")
 
 def get_or_create_user(username: str):
     username = (username or '').strip()
